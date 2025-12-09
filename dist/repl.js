@@ -5,7 +5,13 @@ export function startREPL(state) {
     const { rl, commands } = state;
     rl.prompt();
     rl.on("line", async (input) => {
-        const commandName = input.trim().toLowerCase();
+        //const commandName = input.trim().toLowerCase();
+        const tokens = cleanInput(input);
+        if (tokens.length === 0) {
+            rl.prompt();
+            return;
+        }
+        const [commandName, ...commandArgs] = tokens;
         const command = commands[commandName];
         if (!command) {
             console.log("Unknown command");
@@ -13,7 +19,7 @@ export function startREPL(state) {
             return;
         }
         try {
-            await command.callback(state); // pass entire state
+            await command.callback(state, ...commandArgs);
         }
         catch (err) {
             console.error("Command failed:", err);

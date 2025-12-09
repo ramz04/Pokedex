@@ -10,7 +10,15 @@ export function startREPL(state: State) {
     rl.prompt();
 
     rl.on("line", async (input: string) => {
-        const commandName = input.trim().toLowerCase();
+        //const commandName = input.trim().toLowerCase();
+        const tokens = cleanInput(input);
+
+        if (tokens.length === 0) {
+            rl.prompt();
+            return;
+        }
+
+        const [commandName, ...commandArgs] = tokens;
         const command = commands[commandName];
 
         if (!command) {
@@ -20,7 +28,7 @@ export function startREPL(state: State) {
         }
 
         try {
-            await command.callback(state); // pass entire state
+            await command.callback(state, ...commandArgs);
         } catch (err) {
             console.error("Command failed:", err);
         }
