@@ -4,12 +4,17 @@ import { commandHelp } from "./command_help.js";
 import { commandMap } from "./command_map.js";
 import { commandMapB } from "./command_mapb.js";
 import { commandExplore } from "./command_explore.js";
-import { PokeAPI } from "./pokeapi.js";
+import { commandCatch } from "./command_catch.js";
+import { PokeAPI, PokemonType } from "./pokeapi.js";
 
 export type CLICommand = {
     name: string;
     description: string;
     callback: (state: State, ...args: string[]) => Promise<void>;
+};
+
+export type PokemonName = {
+    name: string;
 };
 
 export type State = {
@@ -18,6 +23,7 @@ export type State = {
     PokeAPI: PokeAPI;
     nextLocationsURL: string | null;
     prevLocationsURL: string | null;
+    user: Record<string, PokemonName>;
 };
 
 export function initState(): State {
@@ -28,6 +34,8 @@ export function initState(): State {
     });
 
     const pokeAPI = new PokeAPI();
+
+    const user: Record<string, PokemonName> = {};
 
     const commands: Record<string, CLICommand> = {
         exit: {
@@ -55,6 +63,11 @@ export function initState(): State {
             description: "Explore a new location",
             callback: commandExplore,
         },
+        catch: {
+            name: "catch",
+            description: "Catch a pokemon",
+            callback: commandCatch,
+        },
     };
 
     return {
@@ -63,5 +76,6 @@ export function initState(): State {
         PokeAPI: pokeAPI,
         nextLocationsURL: null,
         prevLocationsURL: null,
+        user,
     };
 }

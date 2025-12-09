@@ -2,15 +2,7 @@
 > typescript@1.0.0 dev
 > npx tsc && node dist/main.js
 
-Pokedex > [FETCH] location: pastoria-city-area
-tentacool
-tentacruel
-magikarp
-gyarados
-remoraid
-octillery
-wingull
-pelipper
-shellos
-gastrodon
+Pokedex > [FETCH] pokemon squirtle
+Throwing a Pokeball at squirtle...
+squirtle was caught!
 Pokedex > Closing the Pokedex... Goodbye!

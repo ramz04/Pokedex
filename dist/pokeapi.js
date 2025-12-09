@@ -49,4 +49,26 @@ export class PokeAPI {
         this.cache.add(url, data);
         return data;
     }
+    async fetchPokemon(pokemon) {
+        const url = `${PokeAPI.baseURL}/pokemon/${pokemon}/`;
+        const cached = this.cache.get(url);
+        if (cached) {
+            console.log("[CACHE HIT] pokemon:", pokemon);
+            return cached;
+        }
+        console.log("[FETCH] pokemon", pokemon);
+        const response = await fetch(url, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch pokemon: ${response.status}`);
+        }
+        const data = (await response.json());
+        this.cache.add(url, data);
+        return data;
+    }
 }
