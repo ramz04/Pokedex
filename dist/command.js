@@ -5,6 +5,7 @@ import { commandExplore } from "./command_explore.js";
 import { commandCatch } from "./command_catch.js";
 import { commandInspect } from "./command_inspect.js";
 import { commandExit } from "./command_exit.js";
+import { commandPokedex } from "./command_pokedex.js";
 export function getCommands() {
     return {
         help: {
@@ -41,6 +42,11 @@ export function getCommands() {
             name: "inspect <pokemon_name>",
             description: "View details about a caught pokemon",
             callback: commandInspect,
+        },
+        pokedex: {
+            name: "pokedex",
+            description: "View your caught pokemon",
+            callback: commandPokedex,
         },
     };
 }
