@@ -1,6 +1,6 @@
 export async function commandMap(state) {
     try {
-        const data = await state.PokeAPI.fetchLocations(state.nextLocationsURL);
+        const data = await state.pokeAPI.fetchLocations(state.nextLocationsURL);
         for (const location of data.results) {
             console.log(location.name);
         }

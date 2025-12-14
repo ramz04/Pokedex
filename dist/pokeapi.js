@@ -1,8 +1,13 @@
 import { Cache } from "./pokecache.js";
 export class PokeAPI {
     static baseURL = "https://pokeapi.co/api/v2";
-    cache = new Cache(60_000);
-    constructor() { }
+    cache;
+    constructor(cacheInterval) {
+        this.cache = new Cache(cacheInterval);
+    }
+    closeCache() {
+        this.cache.stopReapLoop();
+    }
     async fetchLocations(pageURL) {
         const url = pageURL ? pageURL : `${PokeAPI.baseURL}/location-area`;
         // ✅ Check cache FIRST
@@ -50,25 +55,30 @@ export class PokeAPI {
         return data;
     }
     async fetchPokemon(pokemon) {
-        const url = `${PokeAPI.baseURL}/pokemon/${pokemon}/`;
-        const cached = this.cache.get(url);
-        if (cached) {
-            console.log("[CACHE HIT] pokemon:", pokemon);
-            return cached;
+        try {
+            const url = `${PokeAPI.baseURL}/pokemon/${pokemon}/`;
+            const cached = this.cache.get(url);
+            if (cached) {
+                console.log("[CACHE HIT] pokemon:", pokemon);
+                return cached;
+            }
+            console.log("[FETCH] pokemon", pokemon);
+            const response = await fetch(url, {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch pokemon: ${response.status}`);
+            }
+            const data = (await response.json());
+            this.cache.add(url, data);
+            return data;
         }
-        console.log("[FETCH] pokemon", pokemon);
-        const response = await fetch(url, {
-            method: "GET",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch pokemon: ${response.status}`);
+        catch (e) {
+            throw new Error(`Error fetching pokemon '${pokemon}': ${e.message}`);
         }
-        const data = (await response.json());
-        this.cache.add(url, data);
-        return data;
     }
 }

@@ -1,57 +1,18 @@
-import { createInterface } from "node:readline";
-import { commandExit } from "./command_exit.js";
-import { commandHelp } from "./command_help.js";
-import { commandMap } from "./command_map.js";
-import { commandMapB } from "./command_mapb.js";
-import { commandExplore } from "./command_explore.js";
-import { commandCatch } from "./command_catch.js";
 import { PokeAPI } from "./pokeapi.js";
-export function initState() {
+import { createInterface } from "node:readline";
+import { getCommands } from "./command.js";
+export function initState(cacheInterval) {
     const rl = createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: "Pokedex > ",
+        prompt: "pokedex > ",
     });
-    const pokeAPI = new PokeAPI();
-    const user = {};
-    const commands = {
-        exit: {
-            name: "exit",
-            description: "Exits the pokedex",
-            callback: commandExit,
-        },
-        help: {
-            name: "help",
-            description: "Displays help information",
-            callback: commandHelp,
-        },
-        map: {
-            name: "map",
-            description: "Displays 20 map locations of the pokedex",
-            callback: commandMap,
-        },
-        mapb: {
-            name: "mapb",
-            description: "Displays the previous 20 locations",
-            callback: commandMapB,
-        },
-        explore: {
-            name: "explore",
-            description: "Explore a new location",
-            callback: commandExplore,
-        },
-        catch: {
-            name: "catch",
-            description: "Catch a pokemon",
-            callback: commandCatch,
-        },
-    };
     return {
-        rl,
-        commands,
-        PokeAPI: pokeAPI,
+        readline: rl,
+        commands: getCommands(),
+        pokeAPI: new PokeAPI(cacheInterval),
         nextLocationsURL: null,
         prevLocationsURL: null,
-        user,
+        user: {},
     };
 }

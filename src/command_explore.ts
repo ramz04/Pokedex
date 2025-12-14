@@ -10,7 +10,7 @@ export async function commandExplore(
     }
 
     try {
-        const data = await state.PokeAPI.fetchLocation(location);
+        const data = await state.pokeAPI.fetchLocation(location);
 
         for (const pokemon of data.pokemon_encounters) {
             console.log(pokemon.pokemon.name);

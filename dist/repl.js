@@ -2,29 +2,28 @@ export function cleanInput(input) {
     return input.trim().toLowerCase().split(/\s+/);
 }
 export function startREPL(state) {
-    const { rl, commands } = state;
-    rl.prompt();
-    rl.on("line", async (input) => {
-        //const commandName = input.trim().toLowerCase();
-        const tokens = cleanInput(input);
-        if (tokens.length === 0) {
-            rl.prompt();
+    state.readline.prompt();
+    state.readline.on("line", async (input) => {
+        const words = cleanInput(input);
+        if (words.length === 0) {
+            state.readline.prompt();
             return;
         }
-        const [commandName, ...commandArgs] = tokens;
-        const command = commands[commandName];
-        if (!command) {
-            console.log("Unknown command");
-            rl.prompt();
+        const commandName = words[0];
+        const args = words.slice(1);
+        const cmd = state.commands[commandName];
+        if (!cmd) {
+            console.log(`Unknown command: "${commandName}". Type "help" for a list of commands.`);
+            state.readline.prompt();
             return;
         }
         try {
-            await command.callback(state, ...commandArgs);
+            await cmd.callback(state, ...args);
         }
-        catch (err) {
-            console.error("Command failed:", err);
+        catch (e) {
+            console.log(e.message);
         }
-        rl.prompt();
+        state.readline.prompt();
     });
     // rl.on("line", (input: string) => {
     //     const commands = cleanInput(input);
